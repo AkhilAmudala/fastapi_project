@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from redis_om import get_redis_connection
+from redis_om import get_redis_connection, HashModel
 from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 
@@ -21,6 +21,17 @@ redis= get_redis_connection(
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
+
+#storing data in Redis as hashes, can use JSONModel also
+class Product(HashModel):
+    name: str
+    price: float
+    quantity: int
+    #to connect product class to redis database -> Meta class
+
+    class Meta:
+        database=redis
+#now whatever product we create will be stored in redis        
 
 #to start server:- "uvicorn main:app --reload"
 #to list all running processes in port 8000:- "lsof -i:8000"
